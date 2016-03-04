@@ -10,9 +10,7 @@ import springbook.user.domain.User;
 
 public class UserDao {
 	public void add (User user) throws ClassNotFoundException, SQLException {
-		Class.forName("com.mysql.jdbc.Driver");		
-		Connection c = DriverManager.getConnection(
-				"jdbc:mysql://localhost/mysql_test","root","root");
+		Connection c = getConnection();
 		
 		PreparedStatement ps = c.prepareStatement(
 				"insert into users(id, name, password) values(?, ?, ?)" );
@@ -28,9 +26,7 @@ public class UserDao {
 	}
 	
 	public User get(String id) throws ClassNotFoundException, SQLException {
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection c = DriverManager.getConnection(
-				"jdbc:mysql://localhost/mysql_test","root","root");
+		Connection c = getConnection();
 		
 		PreparedStatement ps = c.prepareStatement(
 				"select * from users where id = ?");
@@ -50,6 +46,13 @@ public class UserDao {
 		c.close();
 		
 		return user;
+	}
+	
+	private Connection getConnection() throws ClassNotFoundException, SQLException {
+		Class.forName("com.mysql.jdbc.Driver");
+		
+		return DriverManager.getConnection(
+				"jdbc:mysql://localhost/mysql_test","root","root");
 	}
 	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
