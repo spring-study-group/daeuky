@@ -1,30 +1,30 @@
 package springbook.user.dao;
 
+import javax.sql.DataSource;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 @Configuration
 public class DaoFactory {
 	
-//	DAO가 늘어날때 마다 ConnectionMaker 구현 클래스의 오브젝트를 생성하는 코드가 메소드마다 반복
-//	어떤 ConnectionMaker 구현 클래스를 사용하지 결정하는 기능이 중복
-//	public AccountDao accountDao() {
-//		return new AccountDao(new DConnectionMaker());
-//	}
-//	
-//	public MessageDao messageDao() {
-//		return new MessageDao(new DConnectionMaker());
-//	}
-	
 	@Bean
 	public UserDao userDao() {
 		UserDao dao = new UserDao();
-		dao.setConnectionMaker(connectionMaker());
+		dao.setDataSource(dataSource());
 		return dao;
 	}
 	
 	@Bean
-	public ConnectionMaker connectionMaker() {
-		return new DConnectionMaker();
+	public DataSource dataSource() {
+		SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+		
+		dataSource.setDriverClass(com.mysql.jdbc.Driver.class);
+		dataSource.setUrl("jdbc:mysql://localhost/mysql_test");
+		dataSource.setUsername("root");
+		dataSource.setPassword("root");
+		
+		return dataSource;
 	}
 }
