@@ -12,7 +12,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import springbook.user.domain.User;
 
-public class UserDao {
+public abstract class UserDao {
 	private DataSource dataSource;
 	
 	public void setDataSource (DataSource dataSource) {
@@ -68,9 +68,9 @@ public class UserDao {
 
 		try {
 		c = dataSource.getConnection();
-//		ps = c.prepareStatement("delete from users");
-		
-		ps = makeStatement(c);
+
+		StatementSrategy strategy = new DeleteAllStatement();
+		ps = strategy.makePreparedStatement(c);
 		
 		ps.executeUpdate();
 		} catch (SQLException e) {
@@ -125,7 +125,5 @@ public class UserDao {
 		}
 	}
 	
-	private PreparedStatement makeStatement(Connection c) throws SQLException {
-		return c.prepareStatement("delete from users");
-	}
+	abstract protected PreparedStatement makeStatement(Connection c) throws SQLException;
 }
