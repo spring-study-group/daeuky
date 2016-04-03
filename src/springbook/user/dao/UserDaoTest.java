@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -103,6 +102,22 @@ public class UserDaoTest {
 		assertThat(user1.getLevel(), is(user2.getLevel()));
 		assertThat(user1.getLogin(), is(user2.getLogin()));
 		assertThat(user1.getRecommend(), is(user2.getRecommend()));
+	}
+	
+	@Test
+	public void update() {
+		dao.deleteAll();
+		dao.add(user1);
+		
+		user1.setName("Daewook");
+		user1.setPassword("password");
+		user1.setLevel(Level.GOLD);
+		user1.setLogin(999);
+		user1.setRecommend(999);
+		dao.update(user1);
+		
+		User user1update = dao.get(user1.getId());
+		checkSameUser(user1, user1update);
 	}
 	
 }

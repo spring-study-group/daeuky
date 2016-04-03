@@ -51,26 +51,7 @@ public class UserDao {
 		}
 	};
 
-	public void add(final User user) throws ClassNotFoundException,
-			SQLException {
-		// this.jdbcContext.workWithStatementStrategy(new StatementStrategy() {
-		// public PreparedStatement makePreparedStatement(Connection c)
-		// throws SQLException {
-		// PreparedStatement ps = c
-		// .prepareStatement("insert into users(id, name, password, level, login, recommend)"
-		// + "values(?,?,?,?,?,?);");
-		//
-		// ps.setString(1, user.getId());
-		// ps.setString(2, user.getName());
-		// ps.setString(3, user.getPassword());
-		// ps.setInt(4, user.getLevel().intValue());
-		// ps.setInt(5, user.getLogin());
-		// ps.setInt(6, user.getRecommend());
-		//
-		// return ps;
-		// }
-		// });
-
+	public void add(final User user) {
 		this.jdbcTemplate.update(
 				"insert into users(id, name, password, level, login, recommend) "
 						+ "values(?,?,?,?,?,?);", user.getId(), user.getName(),
@@ -79,25 +60,16 @@ public class UserDao {
 
 	}
 
-	public User get(String id) throws ClassNotFoundException, SQLException {
+	public User get(String id) {
 		return this.jdbcTemplate.queryForObject("select * from users where id = ?;", new Object[] {id},
 				this.userMapper);
 	}
 
-	public void deleteAll() throws SQLException {
-		// executeSql("delete from users");
-
-		// this.jdbcTemplate.update(new PreparedStatementCreator() {
-		// public PreparedStatement createPreparedStatement(Connection arg0)
-		// throws SQLException {
-		// return arg0.prepareStatement("delete from users");
-		// }
-		// });
-
+	public void deleteAll() {
 		this.jdbcTemplate.update("delete from users");
 	}
 	
-	public List<User> getAll() throws SQLException {
+	public List<User> getAll() {
 		return this.jdbcTemplate.query("select * from users order by id;", 
 				this.userMapper);
 	}
@@ -112,18 +84,14 @@ public class UserDao {
 	}
 
 	public int getCount() throws SQLException {
-//		return this.jdbcTemplate.query(new PreparedStatementCreator() {
-//			public PreparedStatement createPreparedStatement(Connection arg0)
-//					throws SQLException {
-//				return arg0.prepareStatement("select count(*) from users");
-//			}
-//		}, new ResultSetExtractor<Integer>() {
-//			public Integer extractData(ResultSet rs) throws SQLException,
-//					DataAccessException {
-//				rs.next();
-//				return rs.getInt(1);
-//			}
-//		});
 		return this.jdbcTemplate.queryForInt("select count(*) from users");
+	}
+
+	public void update(User user1) {
+		this.jdbcTemplate.update(
+				"update users set name = ?, password = ?, level = ?, login = ?, " +
+		"recommend = ? where id = ?", user1.getName(), user1.getPassword(),
+		user1.getLevel().intValue(), user1.getLogin(), user1.getRecommend(),
+		user1.getId());
 	}
 }
