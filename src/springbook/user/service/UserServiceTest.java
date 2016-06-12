@@ -31,6 +31,24 @@ public class UserServiceTest {
 	
 	List<User> users;
 	
+	static class TestUserServiceException extends RuntimeException {
+		
+	}
+	
+	static class TestUserService extends UserService {
+		private String id;
+		
+		private TestUserService(String id) {
+			this.id = id;
+		}
+		
+		protected void upgradeLevel(User user) {
+			if(user.getId().equals(this.id))
+				throw new TestUserServiceException();
+			
+			super.upgradeLevel(user);
+		}
+	}	
 	
 	@Before
 	public void setup() {
@@ -94,5 +112,25 @@ public class UserServiceTest {
 		
 		assertThat(userWithLevelRead.getLevel(), is(userWithLevel.getLevel()));
 		assertThat(userWithoutLevelRead.getLevel(), is(userWithoutLevel.getLevel()));
+	}
+	
+	@Test
+	public void upgradeAllOrNothing() {
+		UserService testUserService = new TestUserService(users.get(3).getId());
+		testUserService.setUserDao(this.userDao);
+		userDao.deleteAll();
+		
+		for(User user : users) {
+			userDao.add(user);
+		}
+			
+		try { 
+			testUserService.upgradeLevels();
+			fail("TestUserServiceException expected");
+		} catch (TestUserServiceException e) {
+			
+		}
+		
+		checkLevelUpgraded(users.get(1), false);
 	}
 }
